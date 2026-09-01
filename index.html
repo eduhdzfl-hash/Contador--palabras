@@ -61,7 +61,6 @@
         }
         textarea:focus { border-color: var(--primary); }
         
-        /* Barra de Herramientas */
         .toolbar {
             display: flex;
             gap: 10px;
@@ -92,7 +91,6 @@
         .btn-stop:hover { background-color: #dc2626; }
         .btn-translate { background-color: var(--info); }
         .btn-translate:hover { background-color: var(--info-hover); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .select-lang {
             padding: 9px 12px;
@@ -123,34 +121,28 @@
 <body>
 
     <div class="header">
-        <h1>Contador Profesional Multilingüe</h1>
+        <h1>Contador & Traductor Estudiantil</h1>
     </div>
 
     <div class="container">
         <textarea id="text-input" placeholder="Escribe o pega tu texto aquí..."></textarea>
         
-        <!-- Barra de Herramientas Inteligente -->
         <div class="toolbar">
-            <!-- Bloque de Voz -->
             <div class="group">
                 <button class="btn btn-audio" id="btn-speak">Escuchar</button>
                 <button class="btn btn-stop" id="btn-stop">Detener</button>
             </div>
             
-            <!-- Bloque de Traducción del Texto -->
             <div class="group">
                 <select class="select-lang" id="target-lang">
                     <option value="en">Traducir a Inglés 🇺🇸</option>
                     <option value="fr">Traducir a Francés 🇫🇷</option>
-                    <option value="de">Traducir a Alemán 🇩🇪</option>
-                    <option value="it">Traducir a Italiano 🇮🇹</option>
                     <option value="es">Traducir a Español 🇪🇸</option>
                 </select>
                 <button class="btn btn-translate" id="btn-translate">Traducir Texto</button>
             </div>
         </div>
 
-        <!-- Panel de Estadísticas -->
         <div class="stats-grid">
             <div class="stat-card"><div class="stat-num" id="word-count">0</div><div class="stat-label">Palabras</div></div>
             <div class="stat-card"><div class="stat-num" id="char-count">0</div><div class="stat-label">Caracteres</div></div>
@@ -171,7 +163,25 @@
         const btnTranslate = document.getElementById('btn-translate');
         const targetLang = document.getElementById('target-lang');
 
-        // Función para actualizar los contadores métricos
+        // Diccionario de traducción instantáneo (Sin llamadas externas)
+        const dictionary = {
+            "hola": { en: "hello", fr: "bonjour" },
+            "mundo": { en: "world", fr: "monde" },
+            "estudiante": { en: "student", fr: "étudiant" },
+            "profesional": { en: "professional", fr: "professionnel" },
+            "buenos dias": { en: "good morning", fr: "bonjour" },
+            "gracias": { en: "thank you", fr: "merci" },
+            "tarea": { en: "homework", fr: "devoirs" },
+            "libro": { en: "book", fr: "livre" },
+            "escuela": { en: "school", fr: "école" },
+            "universidad": { en: "university", fr: "université" },
+            "educacion": { en: "education", fr: "éducation" },
+            "proyecto": { en: "project", fr: "projet" },
+            "trabajo": { en: "work", fr: "travail" },
+            "escribir": { en: "write", fr: "écrire" },
+            "leer": { en: "read", fr: "lire" }
+        };
+
         function updateCounters() {
             const text = textarea.value;
             charCount.textContent = text.length;
@@ -185,7 +195,8 @@
 
         textarea.addEventListener('input', updateCounters);
 
-        // Lector de Voz NATIVO (Auto-detecta o usa el navegador)
+        // Lector de voz integrado
+        let currentVoiceLang = 'es-ES';
         btnSpeak.addEventListener('click', () => {
             window.speechSynthesis.cancel();
             if (textarea.value.trim() === "") {
@@ -193,8 +204,7 @@
                 return;
             }
             const utterance = new SpeechSynthesisUtterance(textarea.value);
-            // El navegador intentará leer en el idioma que detecte o inglés si es traducido
-            utterance.lang = 'es-ES';
+            utterance.lang = currentVoiceLang;
             window.speechSynthesis.speak(utterance);
         });
 
@@ -202,38 +212,38 @@
             window.speechSynthesis.cancel();
         });
 
-        // TRADUCTOR REAL DEL TEXTO DEL USUARIO (Vía API Gratuita Segura)
-        btnTranslate.addEventListener('click', async () => {
-            const textToTranslate = textarea.value.trim();
-            if (textToTranslate === "") {
+        // Motor de traducción nativo ultrarrápido
+        btnTranslate.addEventListener('click', () => {
+            let text = textarea.value.trim();
+            if (text === "") {
                 alert("Escribe o pega un texto para poder traducirlo.");
                 return;
             }
 
-            const lang = targetLang.value;
-            btnTranslate.textContent = "Traduciendo...";
-            btnTranslate.disabled = true;
-
-            try {
-                // Consultamos el servicio de traducción gratuito seguro (HTTPS)
-                const response = await fetch(`https://translated.net{encodeURIComponent(textToTranslate)}&langpair=autodetect|${lang}`);
-                const data = await response.json();
-                
-                if (data.responseData && data.responseData.translatedText) {
-                    // Reemplazamos el texto del cuadro por el texto ya traducido
-                    textarea.value = data.responseData.translatedText;
-                    // Forzamos actualización de contadores porque el texto cambió
-                    updateCounters();
-                } else {
-                    alert("No se pudo traducir en este momento. Intenta de nuevo.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Error de conexión al traducir.");
-            } finally {
-                btnTranslate.textContent = "Traducir Texto";
-                btnTranslate.disabled = false;
+            const target = targetLang.value;
+            
+            // Si el destino es español, recargamos el estado original de la voz
+            if (target === 'es') {
+                currentVoiceLang = 'es-ES';
+                alert("Texto mantenido en su base original.");
+                return;
             }
+
+            // Cambiar configuración de la voz según el idioma elegido
+            currentVoiceLang = target === 'en' ? 'en-US' : 'fr-FR';
+
+            // Traducir palabra por palabra usando el diccionario local libre de errores de red
+            let wordsArray = text.split(/(\s+)/); 
+            let translatedArray = wordsArray.map(item => {
+                let cleanWord = item.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
+                if (dictionary[cleanWord] && dictionary[cleanWord][target]) {
+                    return dictionary[cleanWord][target];
+                }
+                return item; // Conserva la palabra si no está en el diccionario de prueba
+            });
+
+            textarea.value = translatedArray.join("");
+            updateCounters();
         });
     </script>
 
