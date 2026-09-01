@@ -3,125 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador, Lector & Traductor Pro</title>
+    <title>Contador & Traductor Estudiantil</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #10b981;
-            --success-hover: #059669;
-            --info: #0ea5e9;
-            --info-hover: #0284c7;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --google-blue: #1a73e8;
+            --google-blue-hover: #1557b0;
+            --google-green: #1e8e3e;
+            --google-green-hover: #137333;
+            --google-red: #d93025;
+            --google-red-hover: #b31412;
+            --google-grey-bg: #f8f9fa;
+            --google-card-bg: #ffffff;
+            --google-text: #202124;
+            --google-text-sub: #5f6368;
+            --google-border: #dadce0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: "Roboto", -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--google-grey-bg);
+            color: var(--google-text);
             margin: 0;
-            padding: 20px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         .header {
             width: 100%;
-            max-width: 800px;
+            max-width: 840px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--google-border);
+            padding-bottom: 16px;
         }
-        h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
+        h1 { margin: 0; font-size: 1.4rem; font-weight: 400; }
         .container {
             width: 100%;
-            max-width: 800px;
-            background: var(--card-bg);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
+            max-width: 840px;
+            background: var(--google-card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+            border: 1px solid var(--google-border);
             box-sizing: border-box;
+            overflow: hidden;
         }
         textarea {
             width: 100%;
-            height: 220px;
-            padding: 15px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
+            height: 240px;
+            padding: 20px;
+            border: none;
+            font-size: 1.05rem;
+            line-height: 1.6;
             resize: vertical;
             outline: none;
-            transition: border-color 0.2s;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            border-bottom: 1px solid var(--google-border);
         }
-        textarea:focus { border-color: var(--primary); }
-        
         .toolbar {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            padding: 12px 20px;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
+            background: #ffffff;
         }
-        .group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        
+        .group { display: flex; gap: 8px; }
         .btn {
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
+            padding: 8px 24px;
+            border-radius: 4px; 
             font-size: 0.9rem;
             cursor: pointer;
             font-weight: 500;
-            transition: background 0.2s;
         }
-        .btn-audio { background-color: var(--success); }
-        .btn-audio:hover { background-color: var(--success-hover); }
-        .btn-stop { background-color: #ef4444; }
-        .btn-stop:hover { background-color: #dc2626; }
-        .btn-translate { background-color: var(--info); }
-        .btn-translate:hover { background-color: var(--info-hover); }
-
+        .btn-audio { background-color: var(--google-green); }
+        .btn-stop { background-color: var(--google-red); }
+        .btn-translate { background-color: var(--google-blue); }
         .select-lang {
-            padding: 9px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--google-border);
             background: white;
-            font-size: 0.9rem;
-            outline: none;
-            cursor: pointer;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
+            border-top: 1px solid var(--google-border);
         }
         .stat-card {
-            background: var(--bg);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 16px;
             text-align: center;
-            border: 1px solid var(--border);
+            border-right: 1px solid var(--google-border);
+            background: #ffffff;
         }
-        .stat-num { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
-        .stat-label { font-size: 0.85rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card:last-child { border-right: none; }
+        .stat-num { font-size: 1.6rem; font-weight: 500; color: var(--google-blue); }
+        .stat-label { font-size: 0.75rem; color: var(--google-text-sub); text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Contador & Traductor Estudiantil</h1>
+        <h1>📊 Contador & Traductor Estudiantil</h1>
     </div>
 
     <div class="container">
@@ -151,101 +138,7 @@
         </div>
     </div>
 
-    <script>
-        const textarea = document.getElementById('text-input');
-        const wordCount = document.getElementById('word-count');
-        const charCount = document.getElementById('char-count');
-        const sentenceCount = document.getElementById('sentence-count');
-        const paragraphCount = document.getElementById('paragraph-count');
-        
-        const btnSpeak = document.getElementById('btn-speak');
-        const btnStop = document.getElementById('btn-stop');
-        const btnTranslate = document.getElementById('btn-translate');
-        const targetLang = document.getElementById('target-lang');
-
-        // Diccionario de traducción instantáneo (Sin llamadas externas)
-        const dictionary = {
-            "hola": { en: "hello", fr: "bonjour" },
-            "mundo": { en: "world", fr: "monde" },
-            "estudiante": { en: "student", fr: "étudiant" },
-            "profesional": { en: "professional", fr: "professionnel" },
-            "buenos dias": { en: "good morning", fr: "bonjour" },
-            "gracias": { en: "thank you", fr: "merci" },
-            "tarea": { en: "homework", fr: "devoirs" },
-            "libro": { en: "book", fr: "livre" },
-            "escuela": { en: "school", fr: "école" },
-            "universidad": { en: "university", fr: "université" },
-            "educacion": { en: "education", fr: "éducation" },
-            "proyecto": { en: "project", fr: "projet" },
-            "trabajo": { en: "work", fr: "travail" },
-            "escribir": { en: "write", fr: "écrire" },
-            "leer": { en: "read", fr: "lire" }
-        };
-
-        function updateCounters() {
-            const text = textarea.value;
-            charCount.textContent = text.length;
-            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
-            wordCount.textContent = words.length;
-            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-            sentenceCount.textContent = sentences.length;
-            const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
-            paragraphCount.textContent = paragraphs.length;
-        }
-
-        textarea.addEventListener('input', updateCounters);
-
-        // Lector de voz integrado
-        let currentVoiceLang = 'es-ES';
-        btnSpeak.addEventListener('click', () => {
-            window.speechSynthesis.cancel();
-            if (textarea.value.trim() === "") {
-                alert("Por favor, escribe algo para poder escucharlo.");
-                return;
-            }
-            const utterance = new SpeechSynthesisUtterance(textarea.value);
-            utterance.lang = currentVoiceLang;
-            window.speechSynthesis.speak(utterance);
-        });
-
-        btnStop.addEventListener('click', () => {
-            window.speechSynthesis.cancel();
-        });
-
-        // Motor de traducción nativo ultrarrápido
-        btnTranslate.addEventListener('click', () => {
-            let text = textarea.value.trim();
-            if (text === "") {
-                alert("Escribe o pega un texto para poder traducirlo.");
-                return;
-            }
-
-            const target = targetLang.value;
-            
-            // Si el destino es español, recargamos el estado original de la voz
-            if (target === 'es') {
-                currentVoiceLang = 'es-ES';
-                alert("Texto mantenido en su base original.");
-                return;
-            }
-
-            // Cambiar configuración de la voz según el idioma elegido
-            currentVoiceLang = target === 'en' ? 'en-US' : 'fr-FR';
-
-            // Traducir palabra por palabra usando el diccionario local libre de errores de red
-            let wordsArray = text.split(/(\s+)/); 
-            let translatedArray = wordsArray.map(item => {
-                let cleanWord = item.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
-                if (dictionary[cleanWord] && dictionary[cleanWord][target]) {
-                    return dictionary[cleanWord][target];
-                }
-                return item; // Conserva la palabra si no está en el diccionario de prueba
-            });
-
-            textarea.value = translatedArray.join("");
-            updateCounters();
-        });
-    </script>
-
+    <!-- Vinculamos el archivo de programación que crearemos a continuación -->
+    <script src="script.js"></script>
 </body>
 </html>
