@@ -163,6 +163,7 @@
         const btnTranslate = document.getElementById('btn-translate');
         const targetLang = document.getElementById('target-lang');
 
+        // Diccionario de traducción instantáneo (Sin llamadas externas)
         const dictionary = {
             "hola": { en: "hello", fr: "bonjour" },
             "mundo": { en: "world", fr: "monde" },
@@ -194,6 +195,7 @@
 
         textarea.addEventListener('input', updateCounters);
 
+        // Lector de voz integrado
         let currentVoiceLang = 'es-ES';
         btnSpeak.addEventListener('click', () => {
             window.speechSynthesis.cancel();
@@ -210,6 +212,7 @@
             window.speechSynthesis.cancel();
         });
 
+        // Motor de traducción nativo ultrarrápido
         btnTranslate.addEventListener('click', () => {
             let text = textarea.value.trim();
             if (text === "") {
@@ -219,26 +222,30 @@
 
             const target = targetLang.value;
             
+            // Si el destino es español, recargamos el estado original de la voz
             if (target === 'es') {
                 currentVoiceLang = 'es-ES';
                 alert("Texto mantenido en su base original.");
                 return;
             }
 
+            // Cambiar configuración de la voz según el idioma elegido
             currentVoiceLang = target === 'en' ? 'en-US' : 'fr-FR';
 
+            // Traducir palabra por palabra usando el diccionario local libre de errores de red
             let wordsArray = text.split(/(\s+)/); 
             let translatedArray = wordsArray.map(item => {
                 let cleanWord = item.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g,"");
                 if (dictionary[cleanWord] && dictionary[cleanWord][target]) {
                     return dictionary[cleanWord][target];
                 }
-                return item;
+                return item; // Conserva la palabra si no está en el diccionario de prueba
             });
 
             textarea.value = translatedArray.join("");
             updateCounters();
         });
     </script>
+
 </body>
 </html>
