@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Palabras Profesional con Voz</title>
+    <title>Contador & Lector Pro</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -36,6 +36,20 @@
             gap: 15px;
         }
         h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
+        
+        /* Selector de Idioma Moderno */
+        .lang-select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: white;
+            font-size: 0.9rem;
+            color: var(--text);
+            cursor: pointer;
+            outline: none;
+        }
+        .lang-select:focus { border-color: var(--primary); }
+
         .container {
             width: 100%;
             max-width: 800px;
@@ -61,7 +75,6 @@
         }
         textarea:focus { border-color: var(--primary); }
         
-        /* Controles del Lector de Voz */
         .voice-controls {
             display: flex;
             gap: 10px;
@@ -97,39 +110,33 @@
         }
         .stat-num { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
         .stat-label { font-size: 0.85rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        /* Estilos para el traductor de Google */
-        #google_translate_element { min-height: 38px; }
-        .goog-te-gadget-simple {
-            padding: 6px 12px !important;
-            border-radius: 6px !important;
-            border: 1px solid var(--border) !important;
-            font-size: 0.9rem !important;
-        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Contador & Lector Pro</h1>
-        <!-- Contenedor del Traductor de Google -->
-        <div id="google_translate_element"></div>
+        <h1 id="title-text">Contador & Lector Pro</h1>
+        <!-- Selector de Idioma de la Página -->
+        <select class="lang-select" id="lang-picker">
+            <option value="es">Español 🇪🇸</option>
+            <option value="en">English 🇺🇸</option>
+            <option value="fr">Français 🇫🇷</option>
+        </select>
     </div>
 
     <div class="container">
         <textarea id="text-input" placeholder="Escribe o pega tu texto aquí para contarlo y escucharlo..."></textarea>
         
-        <!-- Botones del Lector de Voz -->
         <div class="voice-controls">
-            <button class="btn" id="btn-speak"> Escuchar Texto</button>
-            <button class="btn btn-stop" id="btn-stop"> Detener</button>
+            <button class="btn" id="btn-speak">Escuchar Texto</button>
+            <button class="btn btn-stop" id="btn-stop">Detener</button>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-num" id="word-count">0</div><div class="stat-label">Palabras</div></div>
-            <div class="stat-card"><div class="stat-num" id="char-count">0</div><div class="stat-label">Caracteres</div></div>
-            <div class="stat-card"><div class="stat-num" id="sentence-count">0</div><div class="stat-label">Oraciones</div></div>
-            <div class="stat-card"><div class="stat-num" id="paragraph-count">0</div><div class="stat-label">Párrafos</div></div>
+            <div class="stat-card"><div class="stat-num" id="word-count">0</div><div class="stat-label" id="lbl-words">Palabras</div></div>
+            <div class="stat-card"><div class="stat-num" id="char-count">0</div><div class="stat-label" id="lbl-chars">Caracteres</div></div>
+            <div class="stat-card"><div class="stat-num" id="sentence-count">0</div><div class="stat-label" id="lbl-sentences">Oraciones</div></div>
+            <div class="stat-card"><div class="stat-num" id="paragraph-count">0</div><div class="stat-label" id="lbl-paragraphs">Párrafos</div></div>
         </div>
     </div>
 
@@ -142,36 +149,85 @@
         
         const btnSpeak = document.getElementById('btn-speak');
         const btnStop = document.getElementById('btn-stop');
+        const langPicker = document.getElementById('lang-picker');
 
-        // --- Lógica del Contador de Palabras ---
+        // Textos de la página en diferentes idiomas
+        const translations = {
+            es: {
+                title: "Contador & Lector Pro",
+                placeholder: "Escribe o pega tu texto aquí para contarlo y escucharlo...",
+                speak: "Escuchar Texto",
+                stop: "Detener",
+                words: "Palabras",
+                chars: "Caracteres",
+                sentences: "Oraciones",
+                paragraphs: "Párrafos",
+                alert: "Por favor, escribe algo para poder leerlo.",
+                voiceLang: "es-ES"
+            },
+            en: {
+                title: "Word Counter & Reader Pro",
+                placeholder: "Type or paste your text here to count and listen...",
+                speak: "Listen Text",
+                stop: "Stop",
+                words: "Words",
+                chars: "Characters",
+                sentences: "Sentences",
+                paragraphs: "Paragraphs",
+                alert: "Please type something to read.",
+                voiceLang: "en-US"
+            },
+            fr: {
+                title: "Compteur de Mots & Lecteur Pro",
+                placeholder: "Écrivez ou collez votre texte ici pour compter et écouter...",
+                speak: "Écouter le Texte",
+                stop: "Arrêter",
+                words: "Mots",
+                chars: "Caractères",
+                sentences: "Phrases",
+                paragraphs: "Paragraphes",
+                alert: "Veuillez écrire quelque chose à lire.",
+                voiceLang: "fr-FR"
+            }
+        };
+
+        // Cambiar idioma de la interfaz
+        let currentLang = 'es';
+        langPicker.addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            const data = translations[currentLang];
+            
+            document.getElementById('title-text').textContent = data.title;
+            textarea.placeholder = data.placeholder;
+            btnSpeak.textContent = data.speak;
+            btnStop.textContent = data.stop;
+            document.getElementById('lbl-words').textContent = data.words;
+            document.getElementById('lbl-chars').textContent = data.chars;
+            document.getElementById('lbl-sentences').textContent = data.sentences;
+            document.getElementById('lbl-paragraphs').textContent = data.paragraphs;
+        });
+
+        // Contador de Palabras
         textarea.addEventListener('input', () => {
             const text = textarea.value;
-            
             charCount.textContent = text.length;
-            
             const words = text.trim().split(/\s+/).filter(word => word.length > 0);
             wordCount.textContent = words.length;
-            
             const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
             sentenceCount.textContent = sentences.length;
-            
             const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
             paragraphCount.textContent = paragraphs.length;
         });
 
-        // --- Lógica del Lector de Voz (Síntesis de voz nativa) ---
+        // Lector de Voz inteligente (Lee en el idioma seleccionado)
         btnSpeak.addEventListener('click', () => {
-            // Cancelar cualquier lectura previa en curso
             window.speechSynthesis.cancel();
-            
             if (textarea.value.trim() === "") {
-                alert("Por favor, escribe algo para poder leerlo.");
+                alert(translations[currentLang].alert);
                 return;
             }
-
             const utterance = new SpeechSynthesisUtterance(textarea.value);
-            // Intenta detectar el idioma del documento o usa el por defecto del sistema
-            utterance.lang = document.documentElement.lang || 'es-ES'; 
+            utterance.lang = translations[currentLang].voiceLang; 
             window.speechSynthesis.speak(utterance);
         });
 
@@ -179,18 +235,6 @@
             window.speechSynthesis.cancel();
         });
     </script>
-
-    <!-- Scripts Oficiales y Seguros del Traductor de Google (HTTPS) -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'es',
-                includedLanguages: 'en,fr,de,it,pt',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="https://google.com"></script>
 
 </body>
 </html>
